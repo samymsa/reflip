@@ -44,6 +44,85 @@ export type NewPassword = {
   new_password: string
 }
 
+export type PrivateUserCreate = {
+  email: string
+  password: string
+  full_name: string
+  is_verified?: boolean
+}
+
+export type ProductCreate = {
+  name: string
+  estimated_selling_price: number | string
+  purchase_id: string
+}
+
+export type ProductPublic = {
+  name: string
+  estimated_selling_price: string
+  id: string
+  purchase_id: string
+}
+
+export type ProductsPublic = {
+  data: Array<ProductPublic>
+  count: number
+}
+
+export type ProductUpdate = {
+  name?: string | null
+  estimated_selling_price?: number | string | null
+}
+
+export type PurchaseCreate = {
+  date: string
+  price: number | string
+  name?: string | null
+}
+
+export type PurchasePublic = {
+  date: string
+  price: string
+  name?: string | null
+  id: string
+  owner_id: string
+  products?: Array<ProductPublic> | null
+}
+
+export type PurchasesPublic = {
+  data: Array<PurchasePublic>
+  count: number
+}
+
+export type PurchaseUpdate = {
+  date?: string | null
+  price?: number | string | null
+  name?: string | null
+}
+
+export type SaleCreate = {
+  date: string
+  total_price: number | string
+}
+
+export type SalePublic = {
+  date: string
+  total_price: string
+  id: string
+  owner_id: string
+  products?: Array<ProductPublic> | null
+}
+
+export type SalesPublic = {
+  data: Array<SalePublic>
+  count: number
+}
+
+export type SaleUpdate = {
+  date?: string | null
+  total_price?: number | string | null
+}
+
 export type Token = {
   access_token: string
   token_type?: string
@@ -157,6 +236,108 @@ export type LoginRecoverPasswordHtmlContentData = {
 }
 
 export type LoginRecoverPasswordHtmlContentResponse = string
+
+export type PrivateCreateUserData = {
+  requestBody: PrivateUserCreate
+}
+
+export type PrivateCreateUserResponse = UserPublic
+
+export type ProductsReadProductsData = {
+  limit?: number
+  skip?: number
+}
+
+export type ProductsReadProductsResponse = ProductsPublic
+
+export type ProductsCreateProductData = {
+  requestBody: ProductCreate
+}
+
+export type ProductsCreateProductResponse = ProductPublic
+
+export type ProductsReadProductData = {
+  id: string
+}
+
+export type ProductsReadProductResponse = ProductPublic
+
+export type ProductsUpdateProductData = {
+  id: string
+  requestBody: ProductUpdate
+}
+
+export type ProductsUpdateProductResponse = ProductPublic
+
+export type ProductsDeleteProductData = {
+  id: string
+}
+
+export type ProductsDeleteProductResponse = Message
+
+export type PurchasesReadPurchasesData = {
+  limit?: number
+  skip?: number
+}
+
+export type PurchasesReadPurchasesResponse = PurchasesPublic
+
+export type PurchasesCreatePurchaseData = {
+  requestBody: PurchaseCreate
+}
+
+export type PurchasesCreatePurchaseResponse = PurchasePublic
+
+export type PurchasesReadPurchaseData = {
+  id: string
+}
+
+export type PurchasesReadPurchaseResponse = PurchasePublic
+
+export type PurchasesUpdatePurchaseData = {
+  id: string
+  requestBody: PurchaseUpdate
+}
+
+export type PurchasesUpdatePurchaseResponse = PurchasePublic
+
+export type PurchasesDeletePurchaseData = {
+  id: string
+}
+
+export type PurchasesDeletePurchaseResponse = Message
+
+export type SalesReadSalesData = {
+  limit?: number
+  skip?: number
+}
+
+export type SalesReadSalesResponse = SalesPublic
+
+export type SalesCreateSaleData = {
+  requestBody: SaleCreate
+}
+
+export type SalesCreateSaleResponse = SalePublic
+
+export type SalesReadSaleData = {
+  id: string
+}
+
+export type SalesReadSaleResponse = SalePublic
+
+export type SalesUpdateSaleData = {
+  id: string
+  requestBody: SaleUpdate
+}
+
+export type SalesUpdateSaleResponse = SalePublic
+
+export type SalesDeleteSaleData = {
+  id: string
+}
+
+export type SalesDeleteSaleResponse = Message
 
 export type UsersReadUsersData = {
   limit?: number
