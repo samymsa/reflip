@@ -86,7 +86,7 @@ export type PurchasePublic = {
   name?: string | null
   id: string
   owner_id: string
-  products?: Array<ProductPublic> | null
+  products: Array<ProductPublic>
 }
 
 export type PurchasesPublic = {

@@ -155,7 +155,7 @@ class Purchase(PurchaseBase, table=True):
 class PurchasePublic(PurchaseBase):
     id: uuid.UUID
     owner_id: uuid.UUID
-    products: list["ProductPublic"] | None = None
+    products: list["ProductPublic"]
 
 
 # Collection of purchases to return via API

@@ -28,7 +28,13 @@ def read_purchases(
     if current_user.is_superuser:
         count_statement = select(func.count()).select_from(Purchase)
         count = session.exec(count_statement).one()
-        statement = select(Purchase).offset(skip).limit(limit)
+        statement = (
+            select(Purchase)
+            .order_by(Purchase.date.desc())
+            .order_by(Purchase.id)
+            .offset(skip)
+            .limit(limit)
+        )
         purchases = session.exec(statement).all()
     else:
         count_statement = (
@@ -40,6 +46,8 @@ def read_purchases(
         statement = (
             select(Purchase)
             .where(Purchase.owner_id == current_user.id)
+            .order_by(Purchase.date.desc())
+            .order_by(Purchase.id)
             .offset(skip)
             .limit(limit)
         )
@@ -49,7 +57,9 @@ def read_purchases(
     result_purchases = []
     for purchase in purchases:
         products = session.exec(
-            select(Product).where(Product.purchase_id == purchase.id)
+            select(Product)
+            .where(Product.purchase_id == purchase.id)
+            .order_by(Product.name)
         ).all()
         purchase_dict = purchase.model_dump()
         purchase_dict["products"] = products
@@ -71,7 +81,7 @@ def read_purchase(session: SessionDep, current_user: CurrentUser, id: uuid.UUID)
 
     # Get associated products
     products = session.exec(
-        select(Product).where(Product.purchase_id == purchase.id)
+        select(Product).where(Product.purchase_id == purchase.id).order_by(Product.name)
     ).all()
 
     purchase_dict = purchase.model_dump()

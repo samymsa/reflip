@@ -18,9 +18,10 @@ import { Route as LoginImport } from './routes/login'
 import { Route as LayoutImport } from './routes/_layout'
 import { Route as LayoutIndexImport } from './routes/_layout/index'
 import { Route as LayoutSettingsImport } from './routes/_layout/settings'
-import { Route as LayoutPurchasesImport } from './routes/_layout/purchases'
 import { Route as LayoutItemsImport } from './routes/_layout/items'
 import { Route as LayoutAdminImport } from './routes/_layout/admin'
+import { Route as LayoutPurchasesIndexImport } from './routes/_layout/purchases/index'
+import { Route as LayoutPurchasesPurchaseIdImport } from './routes/_layout/purchases/$purchaseId'
 
 // Create/Update Routes
 
@@ -59,11 +60,6 @@ const LayoutSettingsRoute = LayoutSettingsImport.update({
   getParentRoute: () => LayoutRoute,
 } as any)
 
-const LayoutPurchasesRoute = LayoutPurchasesImport.update({
-  path: '/purchases',
-  getParentRoute: () => LayoutRoute,
-} as any)
-
 const LayoutItemsRoute = LayoutItemsImport.update({
   path: '/items',
   getParentRoute: () => LayoutRoute,
@@ -71,6 +67,16 @@ const LayoutItemsRoute = LayoutItemsImport.update({
 
 const LayoutAdminRoute = LayoutAdminImport.update({
   path: '/admin',
+  getParentRoute: () => LayoutRoute,
+} as any)
+
+const LayoutPurchasesIndexRoute = LayoutPurchasesIndexImport.update({
+  path: '/purchases/',
+  getParentRoute: () => LayoutRoute,
+} as any)
+
+const LayoutPurchasesPurchaseIdRoute = LayoutPurchasesPurchaseIdImport.update({
+  path: '/purchases/$purchaseId',
   getParentRoute: () => LayoutRoute,
 } as any)
 
@@ -106,16 +112,20 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof LayoutItemsImport
       parentRoute: typeof LayoutImport
     }
-    '/_layout/purchases': {
-      preLoaderRoute: typeof LayoutPurchasesImport
-      parentRoute: typeof LayoutImport
-    }
     '/_layout/settings': {
       preLoaderRoute: typeof LayoutSettingsImport
       parentRoute: typeof LayoutImport
     }
     '/_layout/': {
       preLoaderRoute: typeof LayoutIndexImport
+      parentRoute: typeof LayoutImport
+    }
+    '/_layout/purchases/$purchaseId': {
+      preLoaderRoute: typeof LayoutPurchasesPurchaseIdImport
+      parentRoute: typeof LayoutImport
+    }
+    '/_layout/purchases/': {
+      preLoaderRoute: typeof LayoutPurchasesIndexImport
       parentRoute: typeof LayoutImport
     }
   }
@@ -127,9 +137,10 @@ export const routeTree = rootRoute.addChildren([
   LayoutRoute.addChildren([
     LayoutAdminRoute,
     LayoutItemsRoute,
-    LayoutPurchasesRoute,
     LayoutSettingsRoute,
     LayoutIndexRoute,
+    LayoutPurchasesPurchaseIdRoute,
+    LayoutPurchasesIndexRoute,
   ]),
   LoginRoute,
   RecoverPasswordRoute,

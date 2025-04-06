@@ -2,15 +2,15 @@ import { IconButton } from "@chakra-ui/react";
 import { BsThreeDotsVertical } from "react-icons/bs";
 import { MenuContent, MenuRoot, MenuTrigger } from "../ui/menu";
 
-import type { PurchasePublic } from "@/client";
-import DeletePurchase from "../Purchases/DeletePurchase";
-import EditPurchase from "../Purchases/EditPurchase";
+import type { ProductPublic } from "@/client";
+import DeleteProduct from "../Products/DeleteProduct";
+import EditProduct from "../Products/EditProduct";
 
-interface PurchaseActionsMenuProps {
-  purchase: PurchasePublic;
+interface ProductActionsMenuProps {
+  product: ProductPublic;
 }
 
-export const PurchaseActionsMenu = ({ purchase }: PurchaseActionsMenuProps) => {
+export const ProductActionsMenu = ({ product }: ProductActionsMenuProps) => {
   return (
     <MenuRoot
       positioning={{
@@ -23,8 +23,8 @@ export const PurchaseActionsMenu = ({ purchase }: PurchaseActionsMenuProps) => {
         </IconButton>
       </MenuTrigger>
       <MenuContent>
-        <EditPurchase purchase={purchase} />
-        <DeletePurchase id={purchase.id} />
+        <EditProduct product={product} />
+        <DeleteProduct id={product.id} purchaseId={product.purchase_id} />
       </MenuContent>
     </MenuRoot>
   );
