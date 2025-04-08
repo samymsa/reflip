@@ -20,7 +20,9 @@ import { Route as LayoutIndexImport } from './routes/_layout/index'
 import { Route as LayoutSettingsImport } from './routes/_layout/settings'
 import { Route as LayoutItemsImport } from './routes/_layout/items'
 import { Route as LayoutAdminImport } from './routes/_layout/admin'
+import { Route as LayoutSalesIndexImport } from './routes/_layout/sales/index'
 import { Route as LayoutPurchasesIndexImport } from './routes/_layout/purchases/index'
+import { Route as LayoutSalesSaleIdImport } from './routes/_layout/sales/$saleId'
 import { Route as LayoutPurchasesPurchaseIdImport } from './routes/_layout/purchases/$purchaseId'
 
 // Create/Update Routes
@@ -70,8 +72,18 @@ const LayoutAdminRoute = LayoutAdminImport.update({
   getParentRoute: () => LayoutRoute,
 } as any)
 
+const LayoutSalesIndexRoute = LayoutSalesIndexImport.update({
+  path: '/sales/',
+  getParentRoute: () => LayoutRoute,
+} as any)
+
 const LayoutPurchasesIndexRoute = LayoutPurchasesIndexImport.update({
   path: '/purchases/',
+  getParentRoute: () => LayoutRoute,
+} as any)
+
+const LayoutSalesSaleIdRoute = LayoutSalesSaleIdImport.update({
+  path: '/sales/$saleId',
   getParentRoute: () => LayoutRoute,
 } as any)
 
@@ -124,8 +136,16 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof LayoutPurchasesPurchaseIdImport
       parentRoute: typeof LayoutImport
     }
+    '/_layout/sales/$saleId': {
+      preLoaderRoute: typeof LayoutSalesSaleIdImport
+      parentRoute: typeof LayoutImport
+    }
     '/_layout/purchases/': {
       preLoaderRoute: typeof LayoutPurchasesIndexImport
+      parentRoute: typeof LayoutImport
+    }
+    '/_layout/sales/': {
+      preLoaderRoute: typeof LayoutSalesIndexImport
       parentRoute: typeof LayoutImport
     }
   }
@@ -140,7 +160,9 @@ export const routeTree = rootRoute.addChildren([
     LayoutSettingsRoute,
     LayoutIndexRoute,
     LayoutPurchasesPurchaseIdRoute,
+    LayoutSalesSaleIdRoute,
     LayoutPurchasesIndexRoute,
+    LayoutSalesIndexRoute,
   ]),
   LoginRoute,
   RecoverPasswordRoute,

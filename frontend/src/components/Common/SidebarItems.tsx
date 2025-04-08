@@ -16,6 +16,7 @@ const items = [
   { icon: FiHome, title: "Dashboard", path: "/" },
   { icon: FiBriefcase, title: "Items", path: "/items" },
   { icon: FiShoppingCart, title: "Achats", path: "/purchases" },
+  { icon: FiBriefcase, title: "Ventes", path: "/sales" },
   { icon: FiSettings, title: "User Settings", path: "/settings" },
 ];
 

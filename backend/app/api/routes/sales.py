@@ -28,7 +28,13 @@ def read_sales(
     if current_user.is_superuser:
         count_statement = select(func.count()).select_from(Sale)
         count = session.exec(count_statement).one()
-        statement = select(Sale).offset(skip).limit(limit)
+        statement = (
+            select(Sale)
+            .order_by(Sale.date.desc())
+            .order_by(Sale.total_price.desc())
+            .offset(skip)
+            .limit(limit)
+        )
         sales = session.exec(statement).all()
     else:
         count_statement = (
@@ -40,6 +46,8 @@ def read_sales(
         statement = (
             select(Sale)
             .where(Sale.owner_id == current_user.id)
+            .order_by(Sale.date.desc())
+            .order_by(Sale.total_price.desc())
             .offset(skip)
             .limit(limit)
         )
@@ -84,14 +92,15 @@ def create_sale(
     Create new sale.
     """
     sale = Sale.model_validate(sale_in, update={"owner_id": current_user.id})
+
+    products_query = select(Product).where(Product.id.in_(sale_in.product_ids))
+    sale.products = session.exec(products_query).all()
+
     session.add(sale)
     session.commit()
     session.refresh(sale)
 
-    # Initialize with empty products list
     sale_dict = sale.model_dump()
-    sale_dict["products"] = []
-
     return SalePublic(**sale_dict)
 
 
@@ -111,6 +120,10 @@ def update_sale(
         raise HTTPException(status_code=404, detail="Sale not found")
     if not current_user.is_superuser and (sale.owner_id != current_user.id):
         raise HTTPException(status_code=400, detail="Not enough permissions")
+
+    if sale_in.product_ids is not None:
+        products_query = select(Product).where(Product.id.in_(sale_in.product_ids))
+        sale.products = session.exec(products_query).all()
 
     update_dict = sale_in.model_dump(exclude_unset=True)
     sale.sqlmodel_update(update_dict)

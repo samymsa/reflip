@@ -103,6 +103,7 @@ export type PurchaseUpdate = {
 export type SaleCreate = {
   date: string
   total_price: number | string
+  product_ids: Array<string>
 }
 
 export type SalePublic = {
@@ -110,7 +111,7 @@ export type SalePublic = {
   total_price: string
   id: string
   owner_id: string
-  products?: Array<ProductPublic> | null
+  products: Array<ProductPublic>
 }
 
 export type SalesPublic = {
@@ -121,6 +122,7 @@ export type SalesPublic = {
 export type SaleUpdate = {
   date?: string | null
   total_price?: number | string | null
+  product_ids?: Array<string> | null
 }
 
 export type Token = {

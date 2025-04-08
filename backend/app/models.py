@@ -172,13 +172,14 @@ class SaleBase(SQLModel):
 
 # Properties to receive on sale creation
 class SaleCreate(SaleBase):
-    pass
+    product_ids: list[uuid.UUID]
 
 
 # Properties to receive on sale update
 class SaleUpdate(SaleBase):
     date: datetime.date | None = Field(default=None)
     total_price: Decimal | None = Field(default=None)
+    product_ids: list[uuid.UUID] | None = Field(default=None)
 
 
 # Database model for sales
@@ -198,7 +199,7 @@ class Sale(SaleBase, table=True):
 class SalePublic(SaleBase):
     id: uuid.UUID
     owner_id: uuid.UUID
-    products: list["ProductPublic"] | None = None
+    products: list["ProductPublic"]
 
 
 # Collection of sales to return via API
