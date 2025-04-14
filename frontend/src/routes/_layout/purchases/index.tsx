@@ -1,29 +1,29 @@
 import {
-  Card,
   Container,
   EmptyState,
   Flex,
   Heading,
-  SimpleGrid,
-  Text,
+  Table,
   VStack,
 } from "@chakra-ui/react";
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { FiSearch } from "react-icons/fi";
 import { z } from "zod";
 
-import { PurchasesService } from "@/client";
+import { PurchasesService, PurchaseStatus } from "@/client";
 import { PurchaseActionsMenu } from "@/components/Common/PurchaseActionsMenu";
 import PendingPurchases from "@/components/Pending/PendingPurchases";
 import AddPurchase from "@/components/Purchases/AddPurchase";
-import ViewPurchase from "@/components/Purchases/ViewPurchase";
+import BadgeSelect, { BadgeOption } from "@/components/ui/BadgeSelect";
 import {
   PaginationItems,
   PaginationNextTrigger,
   PaginationPrevTrigger,
   PaginationRoot,
 } from "@/components/ui/pagination.tsx";
+import useCustomToast from "@/hooks/useCustomToast";
+import { handleError } from "@/utils";
 
 const purchasesSearchSchema = z.object({
   page: z.number().catch(1),
@@ -47,7 +47,16 @@ export const Route = createFileRoute("/_layout/purchases/")({
   validateSearch: (search) => purchasesSearchSchema.parse(search),
 });
 
+const purchaseStatusItems: BadgeOption[] = [
+  { label: "En cours", value: "En cours", colorPalette: "blue" },
+  { label: "Réceptionné", value: "Réceptionné", colorPalette: "orange" },
+  { label: "Terminé", value: "Terminé", colorPalette: "green" },
+];
+
 function PurchasesTable() {
+  const queryClient = useQueryClient();
+  const { showSuccessToast } = useCustomToast();
+
   const navigate = useNavigate({ from: Route.fullPath });
   const { page } = Route.useSearch();
 
@@ -88,37 +97,80 @@ function PurchasesTable() {
 
   return (
     <>
-      <SimpleGrid columns={{ base: 1, md: 2, lg: 3 }} gap={4}>
-        {purchases?.map((purchase) => {
-          const purchaseDate = new Date(purchase.date).toLocaleDateString(
-            "fr-FR"
-          );
-          const purchasePrice = Number(purchase.price).toLocaleString("fr-FR", {
-            style: "currency",
-            currency: "EUR",
-          });
+      <Table.Root size={{ base: "sm", md: "md" }}>
+        <Table.Header>
+          <Table.Row>
+            <Table.ColumnHeader w="sm">Nom</Table.ColumnHeader>
+            <Table.ColumnHeader w="sm">Date</Table.ColumnHeader>
+            <Table.ColumnHeader w="sm">Prix</Table.ColumnHeader>
+            <Table.ColumnHeader w="sm">Produits</Table.ColumnHeader>
+            <Table.ColumnHeader w="sm">Statut</Table.ColumnHeader>
+            <Table.ColumnHeader w="sm">Actions</Table.ColumnHeader>
+          </Table.Row>
+        </Table.Header>
+        <Table.Body>
+          {purchases?.map((purchase) => {
+            const purchaseDate = new Date(purchase.date).toLocaleDateString(
+              "fr-FR"
+            );
+            const purchasePrice = Number(purchase.price).toLocaleString(
+              "fr-FR",
+              {
+                style: "currency",
+                currency: "EUR",
+              }
+            );
 
-          return (
-            <Card.Root key={purchase.id} opacity={isPlaceholderData ? 0.5 : 1}>
-              <Card.Header gap={0}>
-                <Flex justifyContent={"space-between"} alignItems={"center"}>
-                  <Card.Title>
-                    {purchase.name || `Achat du ${purchaseDate}`}
-                  </Card.Title>
-                  <PurchaseActionsMenu purchase={purchase} />
-                </Flex>
-                <Card.Description>{purchaseDate}</Card.Description>
-              </Card.Header>
-              <Card.Footer mt={4} justifyContent={"space-between"}>
-                <Text fontSize="lg" fontWeight="bold">
+            return (
+              <Table.Row
+                key={purchase.id}
+                opacity={isPlaceholderData ? 0.5 : 1}
+              >
+                <Table.Cell truncate maxW="sm">
+                  {purchase.name || `Achat du ${purchaseDate}`}
+                </Table.Cell>
+                <Table.Cell truncate maxW="sm">
+                  {purchaseDate}
+                </Table.Cell>
+                <Table.Cell truncate maxW="sm">
                   {purchasePrice}
-                </Text>
-                <ViewPurchase purchase={purchase} />
-              </Card.Footer>
-            </Card.Root>
-          );
-        })}
-      </SimpleGrid>
+                </Table.Cell>
+                <Table.Cell truncate maxW="sm">
+                  {purchase.products.length}
+                </Table.Cell>
+                <Table.Cell>
+                  <BadgeSelect
+                    items={purchaseStatusItems}
+                    defaultValue={[purchase.status]}
+                    variant="solid"
+                    size="md"
+                    onValueChange={({ value }) => {
+                      PurchasesService.updatePurchase({
+                        id: purchase.id,
+                        requestBody: {
+                          status: value[0] as PurchaseStatus,
+                        },
+                      })
+                        .then(() => {
+                          queryClient.invalidateQueries({
+                            queryKey: ["purchases", { page }],
+                          });
+                          showSuccessToast("Statut mis à jour avec succès.");
+                        })
+                        .catch((error) => {
+                          handleError(error);
+                        });
+                    }}
+                  />
+                </Table.Cell>
+                <Table.Cell>
+                  <PurchaseActionsMenu purchase={purchase} />
+                </Table.Cell>
+              </Table.Row>
+            );
+          })}
+        </Table.Body>
+      </Table.Root>
       <Flex justifyContent="flex-end" mt={4}>
         <PaginationRoot
           count={count}

@@ -44,6 +44,7 @@ const AddSale = () => {
     defaultValues: {
       date: new Date().toISOString().split("T")[0],
       total_price: 0,
+      product_ids: [],
     },
   });
 

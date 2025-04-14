@@ -1,6 +1,7 @@
 import datetime
 import uuid
 from decimal import Decimal
+from enum import Enum
 
 from pydantic import EmailStr
 from sqlmodel import Field, Relationship, SQLModel
@@ -119,6 +120,12 @@ class NewPassword(SQLModel):
     new_password: str = Field(min_length=8, max_length=40)
 
 
+class PurchaseStatus(str, Enum):
+    IN_PROGRESS = "En cours"
+    RECEIVED = "Réceptionné"
+    COMPLETED = "Terminé"
+
+
 # Shared properties for Purchase
 class PurchaseBase(SQLModel):
     date: datetime.date
@@ -136,6 +143,7 @@ class PurchaseUpdate(PurchaseBase):
     date: datetime.date | None = Field(default=None)
     price: Decimal | None = Field(default=None)
     name: str | None = Field(default=None, max_length=255)
+    status: PurchaseStatus | None = Field(default=None)
 
 
 # Database model for purchases
@@ -149,6 +157,7 @@ class Purchase(PurchaseBase, table=True):
         back_populates="purchase",
         cascade_delete=True,
     )
+    status: PurchaseStatus = Field(default=PurchaseStatus.IN_PROGRESS)
 
 
 # Properties to return via API
@@ -156,12 +165,19 @@ class PurchasePublic(PurchaseBase):
     id: uuid.UUID
     owner_id: uuid.UUID
     products: list["ProductPublic"]
+    status: PurchaseStatus
 
 
 # Collection of purchases to return via API
 class PurchasesPublic(SQLModel):
     data: list[PurchasePublic]
     count: int
+
+
+class SaleStatus(str, Enum):
+    TO_PREPARE = "A préparer"
+    SHIPPED = "Expédiée"
+    COMPLETED = "Terminée"
 
 
 # Shared properties for Sale
@@ -180,6 +196,7 @@ class SaleUpdate(SaleBase):
     date: datetime.date | None = Field(default=None)
     total_price: Decimal | None = Field(default=None)
     product_ids: list[uuid.UUID] | None = Field(default=None)
+    status: SaleStatus | None = Field(default=None)
 
 
 # Database model for sales
@@ -193,6 +210,7 @@ class Sale(SaleBase, table=True):
         back_populates="sale",
         sa_relationship_kwargs={"primaryjoin": "Sale.id==Product.sale_id"},
     )
+    status: SaleStatus = Field(default=SaleStatus.TO_PREPARE)
 
 
 # Properties to return via API
@@ -200,12 +218,19 @@ class SalePublic(SaleBase):
     id: uuid.UUID
     owner_id: uuid.UUID
     products: list["ProductPublic"]
+    status: SaleStatus
 
 
 # Collection of sales to return via API
 class SalesPublic(SQLModel):
     data: list[SalePublic]
     count: int
+
+
+class ProductStatus(str, Enum):
+    TO_PUBLISH = "A publier"
+    PUBLISHED = "Publié"
+    SOLD = "Vendu"
 
 
 # Shared properties for Product
@@ -223,6 +248,7 @@ class ProductCreate(ProductBase):
 class ProductUpdate(ProductBase):
     name: str | None = Field(default=None, max_length=255)
     estimated_selling_price: Decimal | None = Field(default=None)
+    status: ProductStatus | None = Field(default=None)
 
 
 # Database model for products
@@ -236,12 +262,14 @@ class Product(ProductBase, table=True):
         default=None, foreign_key="sale.id", nullable=True, ondelete="SET NULL"
     )
     sale: Sale | None = Relationship(back_populates="products")
+    status: ProductStatus = Field(default=ProductStatus.TO_PUBLISH)
 
 
 # Properties to return via API
 class ProductPublic(ProductBase):
     id: uuid.UUID
     purchase_id: uuid.UUID
+    status: ProductStatus
 
 
 # Collection of products to return via API

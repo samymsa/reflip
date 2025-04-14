@@ -1,7 +1,8 @@
-import { Outlet, createRootRoute } from "@tanstack/react-router"
-import React, { Suspense } from "react"
+import { Outlet, createRootRoute } from "@tanstack/react-router";
+import React, { Suspense } from "react";
 
-import NotFound from "@/components/Common/NotFound"
+import NotFound from "@/components/Common/NotFound";
+import { LocaleProvider } from "@chakra-ui/react";
 
 const loadDevtools = () =>
   Promise.all([
@@ -15,20 +16,20 @@ const loadDevtools = () =>
           <reactQueryDevtools.ReactQueryDevtools />
         </>
       ),
-    }
-  })
+    };
+  });
 
 const TanStackDevtools =
-  process.env.NODE_ENV === "production" ? () => null : React.lazy(loadDevtools)
+  process.env.NODE_ENV === "production" ? () => null : React.lazy(loadDevtools);
 
 export const Route = createRootRoute({
   component: () => (
-    <>
+    <LocaleProvider locale="fr-FR">
       <Outlet />
       <Suspense>
         <TanStackDevtools />
       </Suspense>
-    </>
+    </LocaleProvider>
   ),
   notFoundComponent: () => <NotFound />,
-})
+});

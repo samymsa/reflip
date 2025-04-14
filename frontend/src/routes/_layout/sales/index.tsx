@@ -6,21 +6,24 @@ import {
   Table,
   VStack,
 } from "@chakra-ui/react";
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { createFileRoute, useNavigate } from "@tanstack/react-router";
 import { FiSearch } from "react-icons/fi";
 import { z } from "zod";
 
-import { SalesService } from "@/client";
+import { SalesService, SaleStatus } from "@/client";
 import { SaleActionsMenu } from "@/components/Common/SaleActionsMenu";
 import PendingSales from "@/components/Pending/PendingSales";
 import AddSale from "@/components/Sales/AddSale";
+import BadgeSelect, { BadgeOption } from "@/components/ui/BadgeSelect";
 import {
   PaginationItems,
   PaginationNextTrigger,
   PaginationPrevTrigger,
   PaginationRoot,
 } from "@/components/ui/pagination.tsx";
+import useCustomToast from "@/hooks/useCustomToast";
+import { handleError } from "@/utils";
 
 const salesSearchSchema = z.object({
   page: z.number().catch(1),
@@ -44,7 +47,15 @@ export const Route = createFileRoute("/_layout/sales/")({
   validateSearch: (search) => salesSearchSchema.parse(search),
 });
 
+const saleStatusItems: BadgeOption[] = [
+  { label: "A préparer", value: "A préparer", colorPalette: "orange" },
+  { label: "Expédiée", value: "Expédiée", colorPalette: "blue" },
+  { label: "Terminée", value: "Terminée", colorPalette: "green" },
+];
+
 function SalesTable() {
+  const queryClient = useQueryClient();
+  const { showSuccessToast } = useCustomToast();
   const navigate = useNavigate({ from: Route.fullPath });
   const { page } = Route.useSearch();
 
@@ -91,8 +102,9 @@ function SalesTable() {
         <Table.Header>
           <Table.Row>
             <Table.ColumnHeader w="sm">Date</Table.ColumnHeader>
-            <Table.ColumnHeader w="sm">Prix total</Table.ColumnHeader>
-            <Table.ColumnHeader w="sm">Quantité de produits</Table.ColumnHeader>
+            <Table.ColumnHeader w="sm">Prix</Table.ColumnHeader>
+            <Table.ColumnHeader w="sm">Produits</Table.ColumnHeader>
+            <Table.ColumnHeader w="sm">Statut</Table.ColumnHeader>
             <Table.ColumnHeader w="sm">Actions</Table.ColumnHeader>
           </Table.Row>
         </Table.Header>
@@ -110,6 +122,29 @@ function SalesTable() {
               </Table.Cell>
               <Table.Cell truncate maxW="sm">
                 {sale.products?.length ?? 0}
+              </Table.Cell>
+              <Table.Cell>
+                <BadgeSelect
+                  items={saleStatusItems}
+                  defaultValue={[sale.status]}
+                  variant="solid"
+                  size="md"
+                  onValueChange={({ value }) => {
+                    SalesService.updateSale({
+                      id: sale.id,
+                      requestBody: { status: value[0] as SaleStatus },
+                    })
+                      .then(() => {
+                        queryClient.invalidateQueries({
+                          queryKey: ["sales", { page }],
+                        });
+                        showSuccessToast("Statut mis à jour avec succès.");
+                      })
+                      .catch((error) => {
+                        handleError(error);
+                      });
+                  }}
+                />
               </Table.Cell>
               <Table.Cell>
                 <SaleActionsMenu sale={sale} />

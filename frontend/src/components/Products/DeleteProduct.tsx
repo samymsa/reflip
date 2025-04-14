@@ -68,7 +68,7 @@ const DeleteProduct = ({
       <DialogTrigger asChild>
         <Button variant="ghost" size="sm" colorPalette="red">
           <FiTrash2 fontSize="16px" />
-          Supprimer le produit
+          Supprimer
         </Button>
       </DialogTrigger>
 

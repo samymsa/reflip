@@ -89,7 +89,7 @@ const EditProduct = ({ product }: EditProductProps) => {
       <DialogTrigger asChild>
         <Button variant="ghost">
           <FaExchangeAlt fontSize="16px" />
-          Modifier le produit
+          Modifier
         </Button>
       </DialogTrigger>
       <DialogContent>

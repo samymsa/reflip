@@ -9,7 +9,6 @@ import {
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useState } from "react";
 import { type SubmitHandler, useForm } from "react-hook-form";
-import { FaExchangeAlt } from "react-icons/fa";
 
 import {
   type ApiError,
@@ -19,6 +18,7 @@ import {
 } from "@/client";
 import useCustomToast from "@/hooks/useCustomToast";
 import { handleError } from "@/utils";
+import { LuPencil } from "react-icons/lu";
 import {
   DialogBody,
   DialogCloseTrigger,
@@ -82,8 +82,8 @@ const EditPurchase = ({ purchase }: EditPurchaseProps) => {
     >
       <DialogTrigger asChild>
         <Button variant="ghost">
-          <FaExchangeAlt fontSize="16px" />
-          Modifier l'achat
+          <LuPencil />
+          Modifier
         </Button>
       </DialogTrigger>
       <DialogContent>

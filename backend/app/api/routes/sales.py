@@ -76,7 +76,9 @@ def read_sale(session: SessionDep, current_user: CurrentUser, id: uuid.UUID) -> 
         raise HTTPException(status_code=400, detail="Not enough permissions")
 
     # Get associated products
-    products = session.exec(select(Product).where(Product.sale_id == sale.id)).all()
+    products = session.exec(
+        select(Product).where(Product.sale_id == sale.id).order_by(Product.name)
+    ).all()
 
     sale_dict = sale.model_dump()
     sale_dict["products"] = products
@@ -101,6 +103,7 @@ def create_sale(
     session.refresh(sale)
 
     sale_dict = sale.model_dump()
+    sale_dict["products"] = sale.products
     return SalePublic(**sale_dict)
 
 

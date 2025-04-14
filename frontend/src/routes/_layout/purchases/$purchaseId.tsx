@@ -1,7 +1,17 @@
 import { PurchasesService } from "@/client";
 import AddProduct from "@/components/Products/AddProduct";
 import ProductsTable from "@/components/Products/ProductsTable";
-import { Container, Heading, Text } from "@chakra-ui/react";
+import {
+  Badge,
+  Box,
+  Container,
+  FormatNumber,
+  Heading,
+  HStack,
+  Separator,
+  Stat,
+  Text,
+} from "@chakra-ui/react";
 import { useQuery } from "@tanstack/react-query";
 import { createFileRoute } from "@tanstack/react-router";
 
@@ -22,26 +32,79 @@ function Purchase() {
   }
 
   const purchase = data!;
-  const purchaseDate = new Date(purchase.date).toLocaleDateString("fr-FR");
-  const purchasePrice = Number(purchase.price).toLocaleString("fr-FR", {
-    style: "currency",
-    currency: "EUR",
-  });
+  const purchaseDate = new Date(purchase.date).toLocaleDateString();
+  const purchasePrice = Number(purchase.price);
+  const estimatedSellingPrice = purchase.products.reduce(
+    (acc, product) => acc + Number(product.estimated_selling_price),
+    0
+  );
+  const estimatedMargin = estimatedSellingPrice - purchasePrice;
+  const estimatedMarginRatio = estimatedMargin / purchasePrice;
 
   return (
-    <Container maxW="full">
-      <Heading size="lg" pt={12}>
-        {purchase.name || `Achat du ${purchaseDate}`}
+    <Container maxW="full" py="12" spaceY="8">
+      <Heading size="lg">
+        <HStack>
+          {purchase.name || `Achat`}
+          <Separator orientation="vertical" height="4" />
+          {purchaseDate}
+        </HStack>
       </Heading>
-      <Text color="gray.600">{purchaseDate}</Text>
-      <Text fontSize="lg" fontWeight="bold" pt={4}>
-        {purchasePrice}
-      </Text>
-      <Heading size="md" pt={8}>
-        Produits ({purchase.products.length || 0})
-      </Heading>
-      <AddProduct purchaseId={purchase.id} />
-      <ProductsTable products={purchase.products} />
+
+      <HStack id="stats" alignItems="top">
+        <Stat.Root>
+          <Stat.Label textWrap="nowrap">Prix d'achat</Stat.Label>
+          <Stat.ValueText>
+            <FormatNumber
+              value={purchasePrice}
+              style="currency"
+              currency="EUR"
+            />
+          </Stat.ValueText>
+        </Stat.Root>
+
+        <Stat.Root>
+          <Stat.Label textWrap="nowrap">Prix de revente estimé</Stat.Label>
+          <Stat.ValueText>
+            <FormatNumber
+              value={estimatedSellingPrice}
+              style="currency"
+              currency="EUR"
+            />
+          </Stat.ValueText>
+        </Stat.Root>
+
+        <Stat.Root>
+          <Stat.Label textWrap="nowrap">Marge estimée</Stat.Label>
+          <Stat.ValueText>
+            <FormatNumber
+              value={estimatedMargin}
+              style="currency"
+              currency="EUR"
+              signDisplay="always"
+            />
+          </Stat.ValueText>
+          <Badge
+            colorPalette={estimatedMargin >= 0 ? "green" : "red"}
+            variant="plain"
+            px="0"
+          >
+            <FormatNumber
+              value={estimatedMarginRatio}
+              style="percent"
+              minimumFractionDigits={2}
+              maximumFractionDigits={2}
+              signDisplay="always"
+            />
+          </Badge>
+        </Stat.Root>
+      </HStack>
+
+      <Box id="products">
+        <Heading size="md">Produits ({purchase.products.length || 0})</Heading>
+        <AddProduct purchaseId={purchase.id} />
+        <ProductsTable products={purchase.products} />
+      </Box>
     </Container>
   );
 }

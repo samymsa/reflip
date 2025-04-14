@@ -62,6 +62,7 @@ export type ProductPublic = {
   estimated_selling_price: string
   id: string
   purchase_id: string
+  status: ProductStatus
 }
 
 export type ProductsPublic = {
@@ -69,9 +70,12 @@ export type ProductsPublic = {
   count: number
 }
 
+export type ProductStatus = "A publier" | "Publié" | "Vendu"
+
 export type ProductUpdate = {
   name?: string | null
   estimated_selling_price?: number | string | null
+  status?: ProductStatus | null
 }
 
 export type PurchaseCreate = {
@@ -87,6 +91,7 @@ export type PurchasePublic = {
   id: string
   owner_id: string
   products: Array<ProductPublic>
+  status: PurchaseStatus
 }
 
 export type PurchasesPublic = {
@@ -94,10 +99,13 @@ export type PurchasesPublic = {
   count: number
 }
 
+export type PurchaseStatus = "En cours" | "Réceptionné" | "Terminé"
+
 export type PurchaseUpdate = {
   date?: string | null
   price?: number | string | null
   name?: string | null
+  status?: PurchaseStatus | null
 }
 
 export type SaleCreate = {
@@ -112,6 +120,7 @@ export type SalePublic = {
   id: string
   owner_id: string
   products: Array<ProductPublic>
+  status: SaleStatus
 }
 
 export type SalesPublic = {
@@ -119,10 +128,13 @@ export type SalesPublic = {
   count: number
 }
 
+export type SaleStatus = "A préparer" | "Expédiée" | "Terminée"
+
 export type SaleUpdate = {
   date?: string | null
   total_price?: number | string | null
   product_ids?: Array<string> | null
+  status?: SaleStatus | null
 }
 
 export type Token = {

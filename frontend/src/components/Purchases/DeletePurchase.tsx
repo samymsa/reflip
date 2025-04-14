@@ -2,7 +2,6 @@ import { Button, DialogTitle, Text } from "@chakra-ui/react";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useState } from "react";
 import { useForm } from "react-hook-form";
-import { FiTrash2 } from "react-icons/fi";
 
 import { PurchasesService } from "@/client";
 import {
@@ -16,6 +15,7 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog";
 import useCustomToast from "@/hooks/useCustomToast";
+import { LuTrash } from "react-icons/lu";
 
 const DeletePurchase = ({ id }: { id: string }) => {
   const [isOpen, setIsOpen] = useState(false);
@@ -59,9 +59,9 @@ const DeletePurchase = ({ id }: { id: string }) => {
       onOpenChange={({ open }) => setIsOpen(open)}
     >
       <DialogTrigger asChild>
-        <Button variant="ghost" size="sm" colorPalette="red">
-          <FiTrash2 fontSize="16px" />
-          Supprimer l'achat
+        <Button variant="ghost" colorPalette="red">
+          <LuTrash />
+          Supprimer
         </Button>
       </DialogTrigger>
 
