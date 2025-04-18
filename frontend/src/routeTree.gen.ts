@@ -22,6 +22,7 @@ import { Route as LayoutItemsImport } from './routes/_layout/items'
 import { Route as LayoutAdminImport } from './routes/_layout/admin'
 import { Route as LayoutSalesIndexImport } from './routes/_layout/sales/index'
 import { Route as LayoutPurchasesIndexImport } from './routes/_layout/purchases/index'
+import { Route as LayoutProductsIndexImport } from './routes/_layout/products/index'
 import { Route as LayoutSalesSaleIdImport } from './routes/_layout/sales/$saleId'
 import { Route as LayoutPurchasesPurchaseIdImport } from './routes/_layout/purchases/$purchaseId'
 
@@ -79,6 +80,11 @@ const LayoutSalesIndexRoute = LayoutSalesIndexImport.update({
 
 const LayoutPurchasesIndexRoute = LayoutPurchasesIndexImport.update({
   path: '/purchases/',
+  getParentRoute: () => LayoutRoute,
+} as any)
+
+const LayoutProductsIndexRoute = LayoutProductsIndexImport.update({
+  path: '/products/',
   getParentRoute: () => LayoutRoute,
 } as any)
 
@@ -140,6 +146,10 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof LayoutSalesSaleIdImport
       parentRoute: typeof LayoutImport
     }
+    '/_layout/products/': {
+      preLoaderRoute: typeof LayoutProductsIndexImport
+      parentRoute: typeof LayoutImport
+    }
     '/_layout/purchases/': {
       preLoaderRoute: typeof LayoutPurchasesIndexImport
       parentRoute: typeof LayoutImport
@@ -161,6 +171,7 @@ export const routeTree = rootRoute.addChildren([
     LayoutIndexRoute,
     LayoutPurchasesPurchaseIdRoute,
     LayoutSalesSaleIdRoute,
+    LayoutProductsIndexRoute,
     LayoutPurchasesIndexRoute,
     LayoutSalesIndexRoute,
   ]),

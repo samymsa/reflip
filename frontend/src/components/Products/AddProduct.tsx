@@ -28,7 +28,7 @@ import {
 import { Field } from "../ui/field";
 
 type AddProductProps = {
-  purchaseId: string;
+  purchaseId?: string;
 };
 
 const AddProduct = ({ purchaseId }: AddProductProps) => {

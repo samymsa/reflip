@@ -28,7 +28,7 @@ def read_products(
     if current_user.is_superuser:
         count_statement = select(func.count()).select_from(Product)
         count = session.exec(count_statement).one()
-        statement = select(Product).offset(skip).limit(limit)
+        statement = select(Product).order_by(Product.name).offset(skip).limit(limit)
         products = session.exec(statement).all()
     else:
         count_statement = (
@@ -40,6 +40,7 @@ def read_products(
         statement = (
             select(Product)
             .where(Product.owner_id == current_user.id)
+            .order_by(Product.name)
             .offset(skip)
             .limit(limit)
         )

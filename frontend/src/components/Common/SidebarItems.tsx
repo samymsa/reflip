@@ -1,23 +1,24 @@
 import { Box, Flex, Icon, Text } from "@chakra-ui/react";
 import { useQueryClient } from "@tanstack/react-query";
 import { Link as RouterLink } from "@tanstack/react-router";
-import {
-  FiBriefcase,
-  FiHome,
-  FiSettings,
-  FiShoppingCart,
-  FiUsers,
-} from "react-icons/fi";
+import { FiUsers } from "react-icons/fi";
 import type { IconType } from "react-icons/lib";
 
 import type { UserPublic } from "@/client";
+import {
+  LuBadgeEuro,
+  LuHouse,
+  LuScanBarcode,
+  LuSettings,
+  LuShoppingBag,
+} from "react-icons/lu";
 
 const items = [
-  { icon: FiHome, title: "Dashboard", path: "/" },
-  { icon: FiBriefcase, title: "Items", path: "/items" },
-  { icon: FiShoppingCart, title: "Achats", path: "/purchases" },
-  { icon: FiBriefcase, title: "Ventes", path: "/sales" },
-  { icon: FiSettings, title: "User Settings", path: "/settings" },
+  { icon: LuHouse, title: "Dashboard", path: "/" },
+  { icon: LuShoppingBag, title: "Achats", path: "/purchases" },
+  { icon: LuBadgeEuro, title: "Ventes", path: "/sales" },
+  { icon: LuScanBarcode, title: "Produits", path: "/products" },
+  { icon: LuSettings, title: "User Settings", path: "/settings" },
 ];
 
 interface SidebarItemsProps {
