@@ -1,6 +1,7 @@
 import {
   Button,
   ButtonGroup,
+  ButtonProps,
   DialogActionTrigger,
   Input,
   Text,
@@ -33,11 +34,11 @@ import {
 } from "../ui/dialog";
 import { Field } from "../ui/field";
 
-interface EditSaleProps {
+interface EditSaleProps extends ButtonProps {
   sale: SalePublic;
 }
 
-const EditSale = ({ sale }: EditSaleProps) => {
+const EditSale = ({ sale, ...props }: EditSaleProps) => {
   const [isOpen, setIsOpen] = useState(false);
   const queryClient = useQueryClient();
   const { showSuccessToast } = useCustomToast();
@@ -97,7 +98,7 @@ const EditSale = ({ sale }: EditSaleProps) => {
       onOpenChange={({ open }) => setIsOpen(open)}
     >
       <DialogTrigger asChild>
-        <Button variant="ghost">
+        <Button {...props}>
           <FaExchangeAlt fontSize="16px" />
           Modifier la vente
         </Button>

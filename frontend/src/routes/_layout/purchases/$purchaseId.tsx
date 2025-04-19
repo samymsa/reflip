@@ -1,6 +1,7 @@
 import { PurchasesService, PurchaseStatus } from "@/client";
-import AddProduct from "@/components/Products/AddProduct";
 import ProductsTable from "@/components/Products/ProductsTable";
+import DeletePurchase from "@/components/Purchases/DeletePurchase";
+import EditPurchase from "@/components/Purchases/EditPurchase";
 import BadgeSelect, { BadgeOption } from "@/components/ui/BadgeSelect";
 import {
   Badge,
@@ -125,9 +126,13 @@ function Purchase() {
         </Stat.Root>
       </HStack>
 
-      <Box id="products">
+      <HStack id="actions">
+        <EditPurchase purchase={purchase} />
+        <DeletePurchase id={purchase.id} />
+      </HStack>
+
+      <Box id="products" spaceY="2">
         <Heading size="md">Produits ({purchase.products.length || 0})</Heading>
-        <AddProduct />
         <ProductsTable products={purchase.products} />
       </Box>
     </Container>

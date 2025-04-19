@@ -16,10 +16,12 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog";
 import useCustomToast from "@/hooks/useCustomToast";
+import { useNavigate } from "@tanstack/react-router";
 
 const DeleteSale = ({ id }: { id: string }) => {
   const [isOpen, setIsOpen] = useState(false);
   const queryClient = useQueryClient();
+  const navigate = useNavigate();
   const { showSuccessToast, showErrorToast } = useCustomToast();
   const {
     handleSubmit,
@@ -35,6 +37,7 @@ const DeleteSale = ({ id }: { id: string }) => {
     onSuccess: () => {
       showSuccessToast("La vente a été supprimée avec succès");
       setIsOpen(false);
+      navigate({ to: "/sales/", search: { page: 1 } });
     },
     onError: () => {
       showErrorToast(

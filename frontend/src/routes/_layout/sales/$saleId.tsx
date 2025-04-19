@@ -1,5 +1,7 @@
 import { SalesService, SaleStatus } from "@/client";
 import ProductsTable from "@/components/Products/ProductsTable";
+import DeleteSale from "@/components/Sales/DeleteSale";
+import EditSale from "@/components/Sales/EditSale";
 import BadgeSelect, { BadgeOption } from "@/components/ui/BadgeSelect";
 import {
   Badge,
@@ -117,6 +119,11 @@ function Sale() {
             />
           </Badge>
         </Stat.Root>
+      </HStack>
+
+      <HStack id="actions">
+        <EditSale sale={sale} />
+        <DeleteSale id={sale.id} />
       </HStack>
 
       <Box id="products">

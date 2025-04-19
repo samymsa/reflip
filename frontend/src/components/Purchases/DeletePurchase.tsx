@@ -15,11 +15,13 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog";
 import useCustomToast from "@/hooks/useCustomToast";
+import { useNavigate } from "@tanstack/react-router";
 import { LuTrash } from "react-icons/lu";
 
 const DeletePurchase = ({ id }: { id: string }) => {
   const [isOpen, setIsOpen] = useState(false);
   const queryClient = useQueryClient();
+  const navigate = useNavigate();
   const { showSuccessToast, showErrorToast } = useCustomToast();
   const {
     handleSubmit,
@@ -35,6 +37,7 @@ const DeletePurchase = ({ id }: { id: string }) => {
     onSuccess: () => {
       showSuccessToast("L'achat a été supprimé avec succès");
       setIsOpen(false);
+      navigate({ to: "/purchases/", search: { page: 1 } });
     },
     onError: () => {
       showErrorToast(

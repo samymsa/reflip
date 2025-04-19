@@ -21,7 +21,7 @@ export const SaleActionsMenu = ({ sale }: SaleActionsMenuProps) => {
       </MenuTrigger>
       <MenuContent>
         <ViewSale sale={sale} />
-        <EditSale sale={sale} />
+        <EditSale sale={sale} variant="ghost" />
         <DeleteSale id={sale.id} />
       </MenuContent>
     </MenuRoot>

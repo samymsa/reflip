@@ -25,7 +25,7 @@ export const PurchaseActionsMenu = ({ purchase }: PurchaseActionsMenuProps) => {
       </MenuTrigger>
       <MenuContent>
         <ViewPurchase purchase={purchase} />
-        <EditPurchase purchase={purchase} />
+        <EditPurchase purchase={purchase} variant="ghost" />
         <DeletePurchase id={purchase.id} />
       </MenuContent>
     </MenuRoot>
