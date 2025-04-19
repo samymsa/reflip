@@ -134,11 +134,8 @@ def update_sale(
     session.commit()
     session.refresh(sale)
 
-    # Get associated products
-    products = session.exec(select(Product).where(Product.sale_id == sale.id)).all()
-
     sale_dict = sale.model_dump()
-    sale_dict["products"] = products
+    sale_dict["products"] = sale.products
 
     return SalePublic(**sale_dict)
 

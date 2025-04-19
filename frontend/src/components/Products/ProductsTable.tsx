@@ -57,7 +57,7 @@ function ProductsTable({ products }: { products: Array<ProductPublic> }) {
                   })
                     .then(() => {
                       queryClient.invalidateQueries({
-                        queryKey: ["purchases", product.purchase_id],
+                        queryKey: ["products"],
                       });
                       showSuccessToast("Statut mis à jour avec succès.");
                     })

@@ -102,7 +102,7 @@ function Purchase() {
 
       <Box id="products">
         <Heading size="md">Produits ({purchase.products.length || 0})</Heading>
-        <AddProduct purchaseId={purchase.id} />
+        <AddProduct />
         <ProductsTable products={purchase.products} />
       </Box>
     </Container>

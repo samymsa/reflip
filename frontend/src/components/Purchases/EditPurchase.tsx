@@ -6,12 +6,13 @@ import {
   Text,
   VStack,
 } from "@chakra-ui/react";
-import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { useState } from "react";
 import { type SubmitHandler, useForm } from "react-hook-form";
 
 import {
   type ApiError,
+  ProductsService,
   type PurchasePublic,
   PurchasesService,
   PurchaseUpdate,
@@ -19,6 +20,7 @@ import {
 import useCustomToast from "@/hooks/useCustomToast";
 import { handleError } from "@/utils";
 import { LuPencil } from "react-icons/lu";
+import Combobox from "../ui/combobox";
 import {
   DialogBody,
   DialogCloseTrigger,
@@ -44,10 +46,14 @@ const EditPurchase = ({ purchase }: EditPurchaseProps) => {
     handleSubmit,
     reset,
     formState: { errors, isSubmitting },
+    control,
   } = useForm<PurchaseUpdate>({
     mode: "onBlur",
     criteriaMode: "all",
-    defaultValues: purchase,
+    defaultValues: {
+      ...purchase,
+      product_ids: purchase.products?.map((product) => product.id) ?? [],
+    },
   });
 
   const mutation = useMutation({
@@ -67,6 +73,16 @@ const EditPurchase = ({ purchase }: EditPurchaseProps) => {
     onSettled: () => {
       queryClient.invalidateQueries({ queryKey: ["purchases"] });
     },
+  });
+
+  const { data: products } = useQuery({
+    queryKey: ["products"],
+    queryFn: () => ProductsService.readProducts(),
+    select: ({ data }) =>
+      data.map((product) => ({
+        label: product.name,
+        value: product.id,
+      })),
   });
 
   const onSubmit: SubmitHandler<PurchaseUpdate> = async (data) => {
@@ -144,6 +160,16 @@ const EditPurchase = ({ purchase }: EditPurchaseProps) => {
                   type="date"
                 />
               </Field>
+
+              <Combobox
+                items={products ?? []}
+                control={control}
+                name="product_ids"
+                label="Produits"
+                selectPlaceholder="Sélectionnez un produit"
+                searchPlaceholder="Rechercher des produits"
+                multiple
+              />
             </VStack>
           </DialogBody>
 

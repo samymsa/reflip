@@ -62,8 +62,15 @@ const Combobox = ({
               </Select.IndicatorGroup>
             </Select.Control>
             <Select.Positioner>
-              <Select.Content>
-                <InputGroup startElement={<LuSearch />} mb={1}>
+              <Select.Content pt="0">
+                <InputGroup
+                  startElement={<LuSearch />}
+                  position="sticky"
+                  top="0"
+                  zIndex="1"
+                  pt="1"
+                  bg="bg"
+                >
                   <Input
                     placeholder={searchPlaceholder}
                     value={searchQuery}

@@ -51,8 +51,7 @@ const EditSale = ({ sale }: EditSaleProps) => {
     mode: "onBlur",
     criteriaMode: "all",
     defaultValues: {
-      date: sale.date,
-      total_price: sale.total_price,
+      ...sale,
       product_ids: sale.products?.map((product) => product.id) ?? [],
     },
   });

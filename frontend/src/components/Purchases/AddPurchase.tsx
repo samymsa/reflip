@@ -1,4 +1,4 @@
-import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { type SubmitHandler, useForm } from "react-hook-form";
 
 import {
@@ -12,10 +12,15 @@ import {
 import { useState } from "react";
 import { FaPlus } from "react-icons/fa";
 
-import { type PurchaseCreate, PurchasesService } from "@/client";
+import {
+  ProductsService,
+  type PurchaseCreate,
+  PurchasesService,
+} from "@/client";
 import type { ApiError } from "@/client/core/ApiError";
 import useCustomToast from "@/hooks/useCustomToast";
 import { handleError } from "@/utils";
+import Combobox from "../ui/combobox";
 import {
   DialogBody,
   DialogCloseTrigger,
@@ -31,7 +36,18 @@ const AddPurchase = () => {
   const [isOpen, setIsOpen] = useState(false);
   const queryClient = useQueryClient();
   const { showSuccessToast } = useCustomToast();
+  const { data: products } = useQuery({
+    queryKey: ["products"],
+    queryFn: () => ProductsService.readProducts(),
+    select: ({ data }) =>
+      data.map((product) => ({
+        label: product.name,
+        value: product.id,
+      })),
+  });
+
   const {
+    control,
     register,
     handleSubmit,
     reset,
@@ -43,6 +59,7 @@ const AddPurchase = () => {
       date: new Date().toISOString().split("T")[0],
       price: 0,
       name: "",
+      product_ids: [],
     },
   });
 
@@ -139,6 +156,16 @@ const AddPurchase = () => {
                   type="date"
                 />
               </Field>
+
+              <Combobox
+                items={products ?? []}
+                control={control}
+                name="product_ids"
+                label="Produits"
+                selectPlaceholder="Sélectionnez un produit"
+                searchPlaceholder="Rechercher des produits"
+                multiple
+              />
             </VStack>
           </DialogBody>
 

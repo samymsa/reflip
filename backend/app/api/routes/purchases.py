@@ -100,14 +100,16 @@ def create_purchase(
     purchase = Purchase.model_validate(
         purchase_in, update={"owner_id": current_user.id}
     )
+
+    products_query = select(Product).where(Product.id.in_(purchase_in.product_ids))
+    purchase.products = session.exec(products_query).all()
+
     session.add(purchase)
     session.commit()
     session.refresh(purchase)
 
-    # Initialize with empty products list
     purchase_dict = purchase.model_dump()
-    purchase_dict["products"] = []
-
+    purchase_dict["products"] = purchase.products
     return PurchasePublic(**purchase_dict)
 
 
@@ -128,19 +130,18 @@ def update_purchase(
     if not current_user.is_superuser and (purchase.owner_id != current_user.id):
         raise HTTPException(status_code=400, detail="Not enough permissions")
 
+    if purchase_in.product_ids is not None:
+        products_query = select(Product).where(Product.id.in_(purchase_in.product_ids))
+        purchase.products = session.exec(products_query).all()
+
     update_dict = purchase_in.model_dump(exclude_unset=True)
     purchase.sqlmodel_update(update_dict)
     session.add(purchase)
     session.commit()
     session.refresh(purchase)
 
-    # Get associated products
-    products = session.exec(
-        select(Product).where(Product.purchase_id == purchase.id)
-    ).all()
-
     purchase_dict = purchase.model_dump()
-    purchase_dict["products"] = products
+    purchase_dict["products"] = purchase.products
 
     return PurchasePublic(**purchase_dict)
 

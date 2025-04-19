@@ -54,14 +54,14 @@ export type PrivateUserCreate = {
 export type ProductCreate = {
   name: string
   estimated_selling_price: number | string
-  purchase_id: string
 }
 
 export type ProductPublic = {
   name: string
   estimated_selling_price: string
   id: string
-  purchase_id: string
+  purchase_id: string | null
+  sale_id: string | null
   status: ProductStatus
 }
 
@@ -82,6 +82,7 @@ export type PurchaseCreate = {
   date: string
   price: number | string
   name?: string | null
+  product_ids: Array<string>
 }
 
 export type PurchasePublic = {
@@ -106,6 +107,7 @@ export type PurchaseUpdate = {
   price?: number | string | null
   name?: string | null
   status?: PurchaseStatus | null
+  product_ids?: Array<string> | null
 }
 
 export type SaleCreate = {

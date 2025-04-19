@@ -27,11 +27,7 @@ import {
 } from "../ui/dialog";
 import { Field } from "../ui/field";
 
-type AddProductProps = {
-  purchaseId?: string;
-};
-
-const AddProduct = ({ purchaseId }: AddProductProps) => {
+const AddProduct = () => {
   const [isOpen, setIsOpen] = useState(false);
   const queryClient = useQueryClient();
   const { showSuccessToast } = useCustomToast();
@@ -52,7 +48,7 @@ const AddProduct = ({ purchaseId }: AddProductProps) => {
   const mutation = useMutation({
     mutationFn: (data: Omit<ProductCreate, "purchase_id">) =>
       ProductsService.createProduct({
-        requestBody: { ...data, purchase_id: purchaseId },
+        requestBody: { ...data },
       }),
     onSuccess: () => {
       showSuccessToast("Produit créé avec succès.");
@@ -64,7 +60,6 @@ const AddProduct = ({ purchaseId }: AddProductProps) => {
     },
     onSettled: () => {
       queryClient.invalidateQueries({ queryKey: ["products"] });
-      queryClient.invalidateQueries({ queryKey: ["purchases", purchaseId] });
     },
   });
 

@@ -135,7 +135,7 @@ class PurchaseBase(SQLModel):
 
 # Properties to receive on purchase creation
 class PurchaseCreate(PurchaseBase):
-    pass
+    product_ids: list[uuid.UUID]
 
 
 # Properties to receive on purchase update
@@ -144,6 +144,7 @@ class PurchaseUpdate(PurchaseBase):
     price: Decimal | None = Field(default=None)
     name: str | None = Field(default=None, max_length=255)
     status: PurchaseStatus | None = Field(default=None)
+    product_ids: list[uuid.UUID] | None = Field(default=None)
 
 
 # Database model for purchases
@@ -241,7 +242,7 @@ class ProductBase(SQLModel):
 
 # Properties to receive on product creation
 class ProductCreate(ProductBase):
-    purchase_id: uuid.UUID
+    pass
 
 
 # Properties to receive on product update
@@ -254,8 +255,8 @@ class ProductUpdate(ProductBase):
 # Database model for products
 class Product(ProductBase, table=True):
     id: uuid.UUID = Field(default_factory=uuid.uuid4, primary_key=True)
-    purchase_id: uuid.UUID = Field(
-        foreign_key="purchase.id", nullable=False, ondelete="CASCADE"
+    purchase_id: uuid.UUID | None = Field(
+        default=None, foreign_key="purchase.id", nullable=True, ondelete="SET NULL"
     )
     purchase: Purchase = Relationship(back_populates="products")
     sale_id: uuid.UUID | None = Field(
@@ -268,7 +269,8 @@ class Product(ProductBase, table=True):
 # Properties to return via API
 class ProductPublic(ProductBase):
     id: uuid.UUID
-    purchase_id: uuid.UUID
+    purchase_id: uuid.UUID | None
+    sale_id: uuid.UUID | None
     status: ProductStatus
 
 
