@@ -1,6 +1,7 @@
-import { PurchasesService } from "@/client";
+import { PurchasesService, PurchaseStatus } from "@/client";
 import AddProduct from "@/components/Products/AddProduct";
 import ProductsTable from "@/components/Products/ProductsTable";
+import BadgeSelect, { BadgeOption } from "@/components/ui/BadgeSelect";
 import {
   Badge,
   Box,
@@ -12,7 +13,7 @@ import {
   Stat,
   Text,
 } from "@chakra-ui/react";
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { createFileRoute } from "@tanstack/react-router";
 
 export const Route = createFileRoute("/_layout/purchases/$purchaseId")({
@@ -20,6 +21,7 @@ export const Route = createFileRoute("/_layout/purchases/$purchaseId")({
 });
 
 function Purchase() {
+  const queryClient = useQueryClient();
   const purchaseId = Route.useParams().purchaseId;
 
   const { data, isLoading } = useQuery({
@@ -41,6 +43,12 @@ function Purchase() {
   const estimatedMargin = estimatedSellingPrice - purchasePrice;
   const estimatedMarginRatio = estimatedMargin / purchasePrice;
 
+  const purchaseStatusItems: BadgeOption[] = [
+    { label: "En cours", value: "En cours", colorPalette: "blue" },
+    { label: "Réceptionné", value: "Réceptionné", colorPalette: "orange" },
+    { label: "Terminé", value: "Terminé", colorPalette: "green" },
+  ];
+
   return (
     <Container maxW="full" py="12" spaceY="8">
       <Heading size="lg">
@@ -48,6 +56,23 @@ function Purchase() {
           {purchase.name || `Achat`}
           <Separator orientation="vertical" height="4" />
           {purchaseDate}
+          <Separator orientation="vertical" height="4" />
+          <BadgeSelect
+            items={purchaseStatusItems}
+            defaultValue={[purchase.status]}
+            variant="solid"
+            size="md"
+            onValueChange={({ value }) => {
+              PurchasesService.updatePurchase({
+                id: purchase.id,
+                requestBody: { status: value[0] as PurchaseStatus },
+              }).then(() => {
+                queryClient.invalidateQueries({
+                  queryKey: ["purchases", purchaseId],
+                });
+              });
+            }}
+          />
         </HStack>
       </Heading>
 

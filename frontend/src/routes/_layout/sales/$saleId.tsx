@@ -1,5 +1,6 @@
-import { SalesService } from "@/client";
+import { SalesService, SaleStatus } from "@/client";
 import ProductsTable from "@/components/Products/ProductsTable";
+import BadgeSelect, { BadgeOption } from "@/components/ui/BadgeSelect";
 import {
   Badge,
   Box,
@@ -11,7 +12,7 @@ import {
   Stat,
   Text,
 } from "@chakra-ui/react";
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { createFileRoute } from "@tanstack/react-router";
 
 export const Route = createFileRoute("/_layout/sales/$saleId")({
@@ -19,6 +20,7 @@ export const Route = createFileRoute("/_layout/sales/$saleId")({
 });
 
 function Sale() {
+  const queryClient = useQueryClient();
   const saleId = Route.useParams().saleId;
 
   const { data, isLoading } = useQuery({
@@ -41,6 +43,12 @@ function Sale() {
   const priceGapRatio =
     priceGap === 0 ? 0 : (priceGap / estimatedSellingPrice) * 100;
 
+  const saleStatusItems: BadgeOption[] = [
+    { label: "A préparer", value: "A préparer", colorPalette: "orange" },
+    { label: "Expédiée", value: "Expédiée", colorPalette: "blue" },
+    { label: "Terminée", value: "Terminée", colorPalette: "green" },
+  ];
+
   return (
     <Container maxW="full" py="12" spaceY="8">
       <Heading size="lg">
@@ -48,6 +56,21 @@ function Sale() {
           Vente
           <Separator orientation="vertical" height="4" />
           {saleDate}
+          <Separator orientation="vertical" height="4" />
+          <BadgeSelect
+            items={saleStatusItems}
+            defaultValue={[sale.status]}
+            variant="solid"
+            size="md"
+            onValueChange={({ value }) => {
+              SalesService.updateSale({
+                id: sale.id,
+                requestBody: { status: value[0] as SaleStatus },
+              }).then(() => {
+                queryClient.invalidateQueries({ queryKey: ["sales", saleId] });
+              });
+            }}
+          />
         </HStack>
       </Heading>
 
