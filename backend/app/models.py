@@ -255,6 +255,9 @@ class ProductUpdate(ProductBase):
 # Database model for products
 class Product(ProductBase, table=True):
     id: uuid.UUID = Field(default_factory=uuid.uuid4, primary_key=True)
+    owner_id: uuid.UUID = Field(
+        foreign_key="user.id", nullable=False, ondelete="CASCADE"
+    )
     purchase_id: uuid.UUID | None = Field(
         default=None, foreign_key="purchase.id", nullable=True, ondelete="SET NULL"
     )
@@ -269,6 +272,7 @@ class Product(ProductBase, table=True):
 # Properties to return via API
 class ProductPublic(ProductBase):
     id: uuid.UUID
+    owner_id: uuid.UUID
     purchase_id: uuid.UUID | None
     sale_id: uuid.UUID | None
     status: ProductStatus

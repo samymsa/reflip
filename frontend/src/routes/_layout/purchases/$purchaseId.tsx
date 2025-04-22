@@ -54,7 +54,7 @@ function Purchase() {
     <Container maxW="full" py="12" spaceY="8">
       <Heading size="lg">
         <HStack>
-          {purchase.name || `Achat`}
+          <Text textWrap="nowrap">{purchase.name || `Achat`}</Text>
           <Separator orientation="vertical" height="4" />
           {purchaseDate}
           <Separator orientation="vertical" height="4" />

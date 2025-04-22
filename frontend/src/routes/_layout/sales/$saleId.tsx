@@ -42,8 +42,7 @@ function Sale() {
     0
   );
   const priceGap = salePrice - estimatedSellingPrice;
-  const priceGapRatio =
-    priceGap === 0 ? 0 : (priceGap / estimatedSellingPrice) * 100;
+  const priceGapRatio = priceGap / estimatedSellingPrice;
 
   const saleStatusItems: BadgeOption[] = [
     { label: "A préparer", value: "A préparer", colorPalette: "orange" },

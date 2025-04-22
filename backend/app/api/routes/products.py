@@ -24,27 +24,15 @@ def read_products(
     """
     Retrieve products.
     """
+    query = select(Product).order_by(Product.name).offset(skip).limit(limit)
+    count_query = select(func.count()).select_from(Product)
 
-    if current_user.is_superuser:
-        count_statement = select(func.count()).select_from(Product)
-        count = session.exec(count_statement).one()
-        statement = select(Product).order_by(Product.name).offset(skip).limit(limit)
-        products = session.exec(statement).all()
-    else:
-        count_statement = (
-            select(func.count())
-            .select_from(Product)
-            .where(Product.owner_id == current_user.id)
-        )
-        count = session.exec(count_statement).one()
-        statement = (
-            select(Product)
-            .where(Product.owner_id == current_user.id)
-            .order_by(Product.name)
-            .offset(skip)
-            .limit(limit)
-        )
-        products = session.exec(statement).all()
+    if not current_user.is_superuser:
+        query = query.where(Product.owner_id == current_user.id)
+        count_query = count_query.where(Product.owner_id == current_user.id)
+
+    count = session.exec(count_query).one()
+    products = session.exec(query).all()
 
     return ProductsPublic(data=products, count=count)
 
