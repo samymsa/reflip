@@ -1,4 +1,4 @@
-import { defineRecipe } from "@chakra-ui/react"
+import { defineRecipe } from "@chakra-ui/react";
 
 export const buttonRecipe = defineRecipe({
   base: {
@@ -6,7 +6,7 @@ export const buttonRecipe = defineRecipe({
     display: "flex",
     alignItems: "center",
     justifyContent: "center",
-    colorPalette: "teal",
+    colorPalette: "purple",
   },
   variants: {
     variant: {
@@ -18,4 +18,4 @@ export const buttonRecipe = defineRecipe({
       },
     },
   },
-})
+});
