@@ -14,11 +14,11 @@ import {
 } from "react-icons/lu";
 
 const items = [
-  { icon: LuHouse, title: "Dashboard", path: "/" },
+  { icon: LuHouse, title: "Tableau de bord", path: "/" },
   { icon: LuShoppingBag, title: "Achats", path: "/purchases" },
   { icon: LuBadgeEuro, title: "Ventes", path: "/sales" },
   { icon: LuScanBarcode, title: "Produits", path: "/products" },
-  { icon: LuSettings, title: "User Settings", path: "/settings" },
+  { icon: LuSettings, title: "Paramètres", path: "/settings" },
 ];
 
 interface SidebarItemsProps {
